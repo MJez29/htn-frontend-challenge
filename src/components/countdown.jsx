@@ -50,20 +50,20 @@ class Countdown extends React.Component {
     render() {
 
         return (
-            <div className="pure-g">
+            <div className="pure-g container">
                 <div className="pure-u-1-3">
-                    <div className="time">
-                        {this.pad(this.state.hours)}
+                    <div className="time time-left">
+                        <h1>{this.pad(this.state.hours)}</h1>
                     </div>
                 </div> 
                 <div className="pure-u-1-3">
-                    <div className="time">
-                        {this.pad(this.state.minutes)}
+                    <div className="time time-center">
+                        <h1>{this.pad(this.state.minutes)}</h1>
                     </div>
                 </div>
                 <div className="pure-u-1-3">
-                    <div className="time">
-                        {this.pad(this.state.seconds)}
+                    <div className="time time-right">
+                        <h1>{this.pad(this.state.seconds)}</h1>
                     </div>
                 </div>             
             </div>

@@ -1,18 +1,50 @@
 .time {
     font-family: 'Roboto Mono', monospace;
-    width: 100px;
+
     text-align: center;
-    border-radius: 5px;
-    color: white;
+    color: rgba(0, 0, 0, 0.6);
     background-color: #00C4FF;
     margin: auto;
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding: 0;
+    border: 2px solid #FFF;
+
+    
+
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 1em 0;
+
+    background-color: rgba(0, 196, 255, 1);
+    background-image: -webkit-linear-gradient(270deg, rgb(81, 214, 255) 50%, rgba(0, 196, 255, 1) 50%);
+}
+
+.time-left {
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+
+.time-center {
+    border-left: 1px;
+    border-right: 1px;
+}
+
+.time-right {
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+.time * {
     font-size: 5em;
-    /* text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25); */
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
     background-color: #C5F4FF;
-    border-radius: 5px;
+    border-radius: 15px;
+    box-sizing: border-box;
+    padding: 25px;
 }
+
