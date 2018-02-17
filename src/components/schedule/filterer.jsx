@@ -43,7 +43,7 @@ class Filterer extends React.Component {
                             <span>Filter by Tag</span>
                         </div>
                         <div className="pure-u-3-5">
-                            <input type="checkbox" defaultChecked onChange={ this.props.onTagChange } name="lightningChallenge" id=""/> Lightning Challenge <br/>
+                            <input type="checkbox" defaultChecked onChange={ this.props.onTagChange } name="lightning_challenge" id=""/> Lightning Challenge <br/>
                             <input type="checkbox" defaultChecked onChange={ this.props.onTagChange } name="talk" id=""/> Talk <br/>
                             <input type="checkbox" defaultChecked onChange={ this.props.onTagChange } name="logistics" id=""/> Logistics <br/>
                             <input type="checkbox" defaultChecked onChange={ this.props.onTagChange } name="workshop" id=""/> Workshop <br/>

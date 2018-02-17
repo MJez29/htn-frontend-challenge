@@ -23,6 +23,15 @@ class Event extends React.Component {
         return 200;
     }
 
+    /**
+     * The amount of space between adjacent events
+     * @static
+     * @returns { number }
+     */
+    static get SPACING() {
+        return 10;
+    }
+
     constructor(props) {
         super(props);
 
@@ -130,21 +139,21 @@ class Event extends React.Component {
     setOffset(ex, my) {
         this.eventOffset = ex;
         this.minuteOffset = my;
-        console.log(ex, my);
     }
 
     /**
      * Sets the length of the event in minutes
+     * The minimum length is 15
      * @param { number } t 
      */
     setLength(t) {
-        this.length = t;
+        this.length = Math.max(t, 15);
     }
 
     /**
      * Returns true if the event meets the search criteria
      * @param { string } keyword 
-     * @param { { lightningChallenge: boolean, talk: boolean, logistics: boolean, workshop: boolean, judging: boolean, food: boolean, meetup: boolean } } tags
+     * @param { { lightning_challenge: boolean, talk: boolean, logistics: boolean, workshop: boolean, judging: boolean, food: boolean, meetup: boolean } } tags
      * @return { boolean }
      */
     passesFilters(keyword, tags) {
@@ -154,13 +163,16 @@ class Event extends React.Component {
         for (let i = 0; i < this.tags.length; i++) {
             if (tags[this.tags[i]]) {
                 hasCommonTag = true;
+                console.log(this.tags[i]);
                 break;
             }
         }
 
         // Check to see if the keyword is found in any of the data about the event
-        return hasCommonTag && (toString(this.id).includes(keyword) || this.title.includes(keyword) || 
-            this.description.includes(keyword) || this.location.includes(keyword));
+        return hasCommonTag && (this.id.toString().toLowerCase().includes(keyword) || 
+            this.title.toLowerCase().includes(keyword) || 
+            this.description.toLowerCase().includes(keyword) || 
+            this.location.toLowerCase().includes(keyword));
     }
 
     render() {
@@ -198,11 +210,11 @@ class Event extends React.Component {
                 </div>
             );
         }
-        console.log(this.length);
+        
         return (
             <div className="event-container" style={ {
                 top: `${ this.minuteOffset * Event.UNIT_HEIGHT }px`,
-                left: `${ this.eventOffset * Event.WIDTH + 10 * (this.eventOffset + 1) }px`,
+                left: `${ this.eventOffset * Event.WIDTH + Event.SPACING * (this.eventOffset + 1) }px`,
             } }>
                 <div className={ `event ${this.tags[0]}` } onClick={ this.toggleInfo } style={ {
                     height: `${ this.length * Event.UNIT_HEIGHT }px`,

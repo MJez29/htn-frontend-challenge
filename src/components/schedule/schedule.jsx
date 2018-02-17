@@ -20,7 +20,7 @@ class Schedule extends React.Component {
         this.state = {
             keyword: "",
             tags: {
-                lightningChallenge: true,
+                lightning_challenge: true,
                 talk: true,
                 logistics: true,
                 workshop: true,
@@ -45,23 +45,12 @@ class Schedule extends React.Component {
                 console.error(err);
             })
 
-        this.tempData = {
-            "id": 472,
-            "title": "Registration",
-            "description": null,
-            "start_time": "2018-09-15T17:30:00-04:00",
-            "end_time": "2018-09-16T02:00:00-04:00",
-            "location": "The Tent",
-            "tags": [
-                "meeting"
-            ],
-            "created_at": "2018-09-15T04:00:59-04:00",
-            "updated_at": "2018-09-15T04:00:59-04:00"
-        }
-
         this.initTimes = this.initTimes.bind(this);
         this.initEvents = this.initEvents.bind(this);
         this.updateEvents = this.updateEvents.bind(this);
+
+        this.onFilterKeywordChange = this.onFilterKeywordChange.bind(this);
+        this.onFilterTagChange = this.onFilterTagChange.bind(this);
     }
 
     /**
@@ -75,9 +64,6 @@ class Schedule extends React.Component {
         this.latestTime.setMinutes(0, 0, 0);
 
         let n = Math.ceil((this.latestTime - this.earliestTime) / (1000 * 60 * 60));
-        console.log(this.earliestTime);
-        console.log(this.latestTime);
-        console.log(n);
 
         for (let i = 0; i < n; i++) {
             let t = new Date(this.earliestTime.getTime() + i * 60 * 60 * 1000);
@@ -126,15 +112,23 @@ class Schedule extends React.Component {
 
             // Adjusts the latest time if necessary
             if (this.events[i].endTime > this.latestTime) {
-                this.latestTime =this.events[i].endTime;
+                this.latestTime = this.events[i].endTime;
             }
         }
+
+        this.earliestTime = new Date(this.earliestTime.getTime() - 2 * 60 * 60 * 1000);
+        this.latestTime = new Date(this.latestTime.getTime() + 2 * 60 * 60 * 1000);
     }
 
     onFilterKeywordChange(e) {
+
         this.setState({
-            
-        })
+            keyword: e.target.value.toLowerCase()
+        }, () => {
+            this.updateEvents(() => {
+                this.forceUpdate();
+            });
+        });
     }
 
     /**
@@ -142,9 +136,15 @@ class Schedule extends React.Component {
      * @param { Event } e 
      */
     onFilterTagChange(e) {
+        let tags = this.state.tags;
+        tags[e.target.name] = e.target.checked;
         this.setState({
-
-        })
+            tags: tags
+        }, () => {
+            this.updateEvents(() => {
+                this.forceUpdate();
+            });
+        });
     }
 
     /**
@@ -153,18 +153,26 @@ class Schedule extends React.Component {
      * @returns { number[] }
      */
     orderTimes(visible) {
-        let order = [];
+        let order = new Map();
 
         for (let i = 0; i < visible.length; ++i) {
-            order.push(visible[i].startTime.getTime(), visible[i].endTime.getTime());
+            let st = visible[i].startTime.getTime();
+            let et = visible[i].endTime.getTime();
+            if (!order.has(st)) {
+                order.set(st, 0);
+            }
+
+            if (!order.has(et)) {
+                order.set(et, 0);
+            }
         }
 
-        order.sort();
-
-        return order;
+        let orderArr = [ ...order.keys() ];
+        orderArr.sort();
+        return orderArr;
     }
 
-    updateEvents() {
+    updateEvents(callback) {
         let visibleEvents = [];
         
         for (let i = 0; i < this.events.length; ++i) {
@@ -181,12 +189,10 @@ class Schedule extends React.Component {
 
         // Initializes all values to 0
         for (let i = 0; i < orderedTimes.length; ++i) {
-            overlapCounter.push(0);
+            overlapCounter.push([]);
         }
 
-        console.log(visibleEvents);
-
-        let totalMaxOverlap = 0;
+        this.totalMaxOverlap = 0;
 
         for (let i = 0; i < visibleEvents.length; ++i) {
             let st = visibleEvents[i].startTime.getTime();
@@ -201,20 +207,43 @@ class Schedule extends React.Component {
             })
 
             // The maximum number of events that the current event overlaps with at one time
-            let curMaxOverlap = 0;
+            let offset = 0;
 
             if (start != -1 && end != -1) {
-                for (let i = start; i < end; ++i) {
 
-                    // Updates the max overlaps
-                    curMaxOverlap = Math.max(curMaxOverlap, overlapCounter[i]);
-                    totalMaxOverlap = Math.max(totalMaxOverlap, overlapCounter[i]);
-
-                    overlapCounter[i]++;
+                // If an event has no length
+                if (end == start) {
+                    end++;
                 }
-                console.log(et / 60000 - st / 60000);
+
+                let n = Math.max(overlapCounter[start].length > 0 ? overlapCounter[start][overlapCounter[start].length - 1] : 0,
+                    overlapCounter[end - 1].length > 0 ? overlapCounter[end - 1][overlapCounter[end - 1].length - 1] : 0) + 2;
+
+                for (let i = 0; i < n; ++i) {
+
+                    // If the index isn't taken at the start or the beginning
+                    if (!overlapCounter[start].includes(i) && !overlapCounter[end - 1].includes(i)) {
+                        let collision = false;
+                        for (let j = start + 1; j < end - 1; j++) {
+                            if (overlapCounter[j].includes(i)) {
+                                collision = true;
+                                break;
+                            }
+                        }
+
+                        if (!collision) {
+                            for (let j = start; j < end; j++) {
+                                overlapCounter[j].push(i);
+                                overlapCounter[j].sort();
+                            }
+
+                            offset = i;
+                            break;
+                        }
+                    }
+                }
                 // Offsets the event based on its position and the positions of events around it
-                visibleEvents[i].setOffset(curMaxOverlap, st / 60000 - this.earliestTime.getTime() / 60000);
+                visibleEvents[i].setOffset(offset, st / 60000 - this.earliestTime.getTime() / 60000);
 
                 // Sets the size of the container
                 visibleEvents[i].setLength(et / 60000 - st / 60000);
@@ -227,7 +256,7 @@ class Schedule extends React.Component {
             visibleEventComponents: visibleEvents.map((e) => {
                 return <Event data={ e } />;
             })
-        });
+        }, callback);
     }
 
     render() {
@@ -240,6 +269,7 @@ class Schedule extends React.Component {
                 <div className="schedule-content-container">
                     { this.timeColumn }
                     <div className="pure-menu pure-menu-horizontal pure-menu-scrollable event-container" style={ {
+                        width: "calc(100% - 8ch)",
                         height: "5000px"
                     } }>
                         { this.state.visibleEventComponents }
