@@ -3,13 +3,23 @@ import logo from './logo.svg';
 import './App.css';
 import Countdown from "./components/countdown";
 
+import Schedule from "./components/schedule/schedule";
+
 class App extends Component {
+
+  constructor() {
+    super();
+  }
+
   render() {
     return (
       <div className="App">
         <div className="countdown">
-          <Countdown/>
+        	<Countdown/>
         </div>
+		<div>
+			<Schedule />
+		</div>
       </div>
     );
   }
