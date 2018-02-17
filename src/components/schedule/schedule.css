@@ -1,0 +1,32 @@
+.schedule-times {
+    width: 8ch;
+    text-align: right;
+    position: relative;
+    border-right: 4px solid rgba(0, 0, 0, 1);
+    box-sizing: border-box;
+}
+
+.schedule-time {
+    position: absolute;
+    font-size: 0.8em;
+    right: 2ch;
+    color: rgba(9, 130, 166, 1);
+}
+
+.schedule-day {
+    position: absolute;
+    font-size: 1.2em;
+    border-radius: 50px;
+    width: 3em;
+    height: 3em;
+    right:  calc(-1.5em - 2px);
+    border: 3px solid black;
+    box-shadow: 0px 0px 3px #000;
+    background-color: rgba(255, 255, 255, 1);
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-align: center;
+    padding-top: 0.75em;
+    background-color: rgba(197, 244, 255, 1);
+}
