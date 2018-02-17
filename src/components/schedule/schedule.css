@@ -30,3 +30,13 @@
     padding-top: 0.75em;
     background-color: rgba(197, 244, 255, 1);
 }
+
+.event-container {
+    position: absolute;
+    left: 6ch;
+    top: 0;
+}
+
+.schedule-content-container {
+    position: relative;
+}

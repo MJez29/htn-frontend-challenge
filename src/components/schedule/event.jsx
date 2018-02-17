@@ -5,70 +5,117 @@ import Helper from "../../helper";
 
 class Event extends React.Component {
 
+    /**
+     * The height in px that a 1 minute long event would have
+     * @static
+     * @returns { number }
+     */
+    static get UNIT_HEIGHT() {
+        return 4 / 3;
+    }
+
+    /**
+     * The width of the event in px
+     * @static
+     * @return { number }
+     */
+    static get WIDTH() {
+        return 200;
+    }
+
     constructor(props) {
         super(props);
 
         this.state = {};
 
+        let p = this.props.data || this.props;
+
         /**
          * The ID of the event
          * @type { number }
          */
-        this.id = this.props.data.id;
+        this.id = p.id;
 
         /**
          * The name of the event
          * @type { string }
          */
-        this.title = this.props.data.title;
+        this.title = p.title || "";
 
         /**
          * The start time of the event
          * @type { Date }
          */
-        this.startTime = new Date(this.props.data.start_time);
+        this.startTime = new Date(p.start_time);
 
         /**
          * The end time of the event
          * @type { Date }
          */
-        this.endTime = new Date(this.props.data.end_time);
+        this.endTime = new Date(p.end_time);
 
         /**
          * The description of the event
          * @type { string }
          */
-        this.description = this.props.data.description;
+        this.description = p.description || "";
 
         /**
          * The location of the event
          * @type { string }
          */
-        this.location = this.props.data.location;
+        this.location = p.location || "";
 
         /**
          * The tags associated with the event
          * @type { string[] }
          */
-        this.tags = this.props.data.tags;
+        this.tags = p.tags || [];
+
+        /**
+         * The number of events to the left of the event
+         * @type { number }
+         */
+        this.eventOffset = p.eventOffset || 0;
+
+        /**
+         * The number of minutes before this event begins measured from the start of the schedule
+         * @type { number }
+         */
+        this.minuteOffset = p.minuteOffset || 0;
+
+        /**
+         * The length of the event in minutes
+         * @type { number }
+         */
+        this.length = p.length || 0;
 
         this.displayInfo = this.displayInfo.bind(this);
         this.hideInfo = this.hideInfo.bind(this);
         this.toggleInfo = this.toggleInfo.bind(this);
     }
 
+    /**
+     * Enables the additional info popup
+     */
     displayInfo() {
         this.setState({
             popup: true
         })
     }
 
+    /**
+     * Toggles the additional info popup
+     */
     toggleInfo() {
         this.setState({
             popup: !this.state.popup
         })
     }
 
+    /**
+     * Disables the additional info popup
+     */
     hideInfo() {
         this.setState({
             popup: false
@@ -76,21 +123,44 @@ class Event extends React.Component {
     }
 
     /**
+     * Sets the parameters used to position the event within the schedule
+     * @param { number } ex - The number of events to the left of this event
+     * @param { number } my - The number of minutes since the start of the schedule
+     */
+    setOffset(ex, my) {
+        this.eventOffset = ex;
+        this.minuteOffset = my;
+        console.log(ex, my);
+    }
+
+    /**
+     * Sets the length of the event in minutes
+     * @param { number } t 
+     */
+    setLength(t) {
+        this.length = t;
+    }
+
+    /**
      * Returns true if the event meets the search criteria
      * @param { string } keyword 
-     * @param {*} tags
+     * @param { { lightningChallenge: boolean, talk: boolean, logistics: boolean, workshop: boolean, judging: boolean, food: boolean, meetup: boolean } } tags
+     * @return { boolean }
      */
     passesFilters(keyword, tags) {
+
+        // Checks to see if it meets the tag criteria
         let hasCommonTag = false;
-        for (let i = 0; i < tags.length; i++) {
-            if (this.tags.includes(tags[i])) {
+        for (let i = 0; i < this.tags.length; i++) {
+            if (tags[this.tags[i]]) {
                 hasCommonTag = true;
                 break;
             }
         }
 
-        return hasCommonTag && (this.id.contains(keyword) || this.title.contains(keyword) || this.description.contains(keyword) ||
-            this.location.contains(keyword));
+        // Check to see if the keyword is found in any of the data about the event
+        return hasCommonTag && (toString(this.id).includes(keyword) || this.title.includes(keyword) || 
+            this.description.includes(keyword) || this.location.includes(keyword));
     }
 
     render() {
@@ -130,7 +200,10 @@ class Event extends React.Component {
         }
 
         return (
-            <div className="event-container">
+            <div className="event-container" style={ {
+                top: `${ this.minuteOffset * Event.UNIT_HEIGHT }px`,
+                left: `${ this.eventOffset * Event.WIDTH }px`
+            } }>
                 <div className={ `event ${this.tags[0]}` } onClick={ this.toggleInfo }>
                     <h1 className="event-title">
                         { this.title }

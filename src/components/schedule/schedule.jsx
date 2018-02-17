@@ -28,17 +28,21 @@ class Schedule extends React.Component {
                 food: true,
                 meetup: true
             },
-            visibleEvents: []
+            visibleEventComponents: []
         };
+
+        this.events = [];
         
         // Gets the event data from the server
         Axios.get("https://hackthenorth.com/fe-schedule.json")
             .then((res) => {
-                this.initSchedule(res.data);
+                this.initEvents(res.data);
+                this.initTimes();
+                this.updateEvents();
                 this.forceUpdate();
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
             })
 
         this.tempData = {
@@ -56,7 +60,8 @@ class Schedule extends React.Component {
         }
 
         this.initTimes = this.initTimes.bind(this);
-        this.initSchedule = this.initSchedule.bind(this);
+        this.initEvents = this.initEvents.bind(this);
+        this.updateEvents = this.updateEvents.bind(this);
     }
 
     /**
@@ -124,8 +129,6 @@ class Schedule extends React.Component {
                 this.latestTime =this.events[i].endTime;
             }
         }
-
-        this.initTimes();
     }
 
     onFilterKeywordChange(e) {
@@ -162,16 +165,16 @@ class Schedule extends React.Component {
     }
 
     updateEvents() {
-        this.state.visibleEvents = [];
+        let visibleEvents = [];
         
         for (let i = 0; i < this.events.length; ++i) {
             if (this.events[i].passesFilters(this.state.keyword, this.state.tags)) {
-                visibleEvents.push(events[i]);
+                visibleEvents.push(this.events[i]);
             }
         }
 
         // Orders all important times of the visible events
-        let orderedTimes = this.orderTimes(this.state.visibleEvents);
+        let orderedTimes = this.orderTimes(visibleEvents);
 
         // The counter to detect when events overlap
         let overlapCounter = [];
@@ -181,20 +184,47 @@ class Schedule extends React.Component {
             overlapCounter.push(0);
         }
 
-        let maxOverlap = -1;
+        console.log(visibleEvents);
 
-        for (let i = 0; i < this.state.visibleEvents; ++i) {
-            let j = 0;
+        let totalMaxOverlap = 0;
 
-            while (orderedTimes[j] < this.state.visibleEvents[i].startTime.getDate() && j < orderedTimes.length) {
-                ++j;
-            }
+        for (let i = 0; i < visibleEvents.length; ++i) {
+            let st = visibleEvents[i].startTime.getTime();
+            let et = visibleEvents[i].endTime.getTime();
 
-            while (orderedTimes[j] < this.state.visibleEvents[i].endTime.getDate() && j < orderedTimes.length) {
-                
-                overlapCounter[j]++;
+            let start = orderedTimes.findIndex((e) => {
+                return e == st;
+            });
+
+            let end = orderedTimes.findIndex((e) => {
+                return e == et;
+            })
+
+            // The maximum number of events that the current event overlaps with at one time
+            let curMaxOverlap = 0;
+
+            if (start != -1 && end != -1) {
+                for (let i = start; i < end; ++i) {
+
+                    // Updates the max overlaps
+                    curMaxOverlap = Math.max(curMaxOverlap, overlapCounter[i]);
+                    totalMaxOverlap = Math.max(totalMaxOverlap, overlapCounter[i]);
+
+                    overlapCounter[i]++;
+                }
+                console.log(curMaxOverlap);
+                // Offsets the event based on its position and the positions of events around it
+                visibleEvents[i].setOffset(curMaxOverlap, st / 60000 - this.earliestTime.getTime() / 60000);
+            } else {
+                console.error("Find in orderedTimes failed.");
             }
         }
+
+        this.setState({
+            visibleEventComponents: visibleEvents.map((e) => {
+                return <Event data={ e } />;
+            })
+        });
     }
 
     render() {
@@ -204,9 +234,11 @@ class Schedule extends React.Component {
                 <h1>Schedule</h1>
                 <hr/>
                 <Filterer onKeywordChange={ this.onFilterKeywordChange } onTagChange={ this.onFilterTagChange }/>
-                { this.timeColumn }
-                <div className="pure-menu pure-menu-horizontal pure-menu-scrollable">
-                    { this.visibleEvents }
+                <div className="schedule-content-container">
+                    { this.timeColumn }
+                    <div className="pure-menu pure-menu-horizontal pure-menu-scrollable event-container">
+                        { this.state.visibleEventComponents }
+                    </div>
                 </div>
             </div>
         );
