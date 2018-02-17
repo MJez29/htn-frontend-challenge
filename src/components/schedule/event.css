@@ -5,9 +5,16 @@
 .event {
     border-radius: 5px;
     position: absolute;
-    width: 200px;
-    height: 80px;
     cursor: pointer;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.event-title {
+    white-space: normal;
+    height: 100%;
+    overflow: hidden;
+    padding: 5px;
 }
 
 .lightning_challenge {
@@ -15,9 +22,17 @@
     border: 1px solid rgba(41, 128, 217, 1);
 }
 
+.lightning_challenge:hover {
+    background-color: rgba(41, 128, 217, 0.1);
+}
+
 .talk {
     background-color: rgba(241, 196, 15, 0.2);
     border: 1px solid rgba(241, 196, 15, 1);
+}
+
+.talk:hover {
+    background-color: rgba(241, 196, 15, 0.1);
 }
 
 .logistics {
@@ -25,9 +40,17 @@
     border: 1px solid rgba(52, 73, 94, 1);
 }
 
+.logistics:hover {
+    background-color: rgba(52, 73, 94, 0.1);
+}
+
 .workshop {
     background-color: rgba(26, 188, 156, 0.2);
     border: 1px solid rgba(26, 188, 156, 1);
+}
+
+.workshop:hover {
+    background-color: rgba(26, 188, 156, 0.1);
 }
 
 .judging {
@@ -35,14 +58,26 @@
     border: 1px solid rgba(142, 68, 173, 1);
 }
 
+.judging:hover {
+    background-color: rgba(142, 68, 173, 0.1);
+}
+
 .food {
     background-color: rgba(210, 82, 127, 0.2);
     border: 1px solid rgba(210, 82, 127, 1);
 }
 
-.meeting {
+.food:hover {
+    background-color: rgba(210, 82, 127, 0.1);
+}
+
+.meetup {
     background-color: rgba(192, 57, 45, 0.2);
     border: 1px solid rgba(192, 57, 45, 1);
+}
+
+.meetup:hover {
+    background-color: rgba(192, 57, 45, 0.1);
 }
 
 /*
@@ -132,6 +167,6 @@
     background-color: rgba(210, 82, 127, 1);
 }
 
-.event-popup.meeting {
+.event-popup.meetup {
     background-color: rgba(192, 57, 45, 1);
 }

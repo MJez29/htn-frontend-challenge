@@ -4,6 +4,8 @@
     position: relative;
     border-right: 4px solid rgba(0, 0, 0, 1);
     box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 1);
+    z-index: 2;
 }
 
 .schedule-time {
@@ -33,10 +35,12 @@
 
 .event-container {
     position: absolute;
-    left: 6ch;
+    left: 8ch;
     top: 0;
+    z-index: 1;
 }
 
 .schedule-content-container {
     position: relative;
+    overflow-x: hidden;
 }

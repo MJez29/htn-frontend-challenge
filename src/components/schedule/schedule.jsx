@@ -212,9 +212,12 @@ class Schedule extends React.Component {
 
                     overlapCounter[i]++;
                 }
-                console.log(curMaxOverlap);
+                console.log(et / 60000 - st / 60000);
                 // Offsets the event based on its position and the positions of events around it
                 visibleEvents[i].setOffset(curMaxOverlap, st / 60000 - this.earliestTime.getTime() / 60000);
+
+                // Sets the size of the container
+                visibleEvents[i].setLength(et / 60000 - st / 60000);
             } else {
                 console.error("Find in orderedTimes failed.");
             }
@@ -236,7 +239,9 @@ class Schedule extends React.Component {
                 <Filterer onKeywordChange={ this.onFilterKeywordChange } onTagChange={ this.onFilterTagChange }/>
                 <div className="schedule-content-container">
                     { this.timeColumn }
-                    <div className="pure-menu pure-menu-horizontal pure-menu-scrollable event-container">
+                    <div className="pure-menu pure-menu-horizontal pure-menu-scrollable event-container" style={ {
+                        height: "5000px"
+                    } }>
                         { this.state.visibleEventComponents }
                     </div>
                 </div>

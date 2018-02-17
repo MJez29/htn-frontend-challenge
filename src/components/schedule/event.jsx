@@ -46,13 +46,13 @@ class Event extends React.Component {
          * The start time of the event
          * @type { Date }
          */
-        this.startTime = new Date(p.start_time);
+        this.startTime = new Date(p.start_time || p.startTime);
 
         /**
          * The end time of the event
          * @type { Date }
          */
-        this.endTime = new Date(p.end_time);
+        this.endTime = new Date(p.end_time || p.endTime);
 
         /**
          * The description of the event
@@ -198,16 +198,19 @@ class Event extends React.Component {
                 </div>
             );
         }
-
+        console.log(this.length);
         return (
             <div className="event-container" style={ {
                 top: `${ this.minuteOffset * Event.UNIT_HEIGHT }px`,
-                left: `${ this.eventOffset * Event.WIDTH }px`
+                left: `${ this.eventOffset * Event.WIDTH + 10 * (this.eventOffset + 1) }px`,
             } }>
-                <div className={ `event ${this.tags[0]}` } onClick={ this.toggleInfo }>
-                    <h1 className="event-title">
+                <div className={ `event ${this.tags[0]}` } onClick={ this.toggleInfo } style={ {
+                    height: `${ this.length * Event.UNIT_HEIGHT }px`,
+                    width: Event.WIDTH
+                } }>
+                    <p className="event-title">
                         { this.title }
-                    </h1>
+                    </p>
                 </div>
                 { popup }
             </div>
