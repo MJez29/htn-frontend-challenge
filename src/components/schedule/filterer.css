@@ -1,0 +1,33 @@
+.add-filters-button {
+    font-size: 1.2em;
+    color: rgba(9, 130, 166, 1);
+    text-align: center;
+    cursor: pointer;
+}
+
+.full-schedule, .my-schedule {
+    box-sizing: border-box;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    font-size: 1.6em;
+}
+
+.full-schedule h1, .my-schedule h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.full-schedule h1:hover, .my-schedule h1:hover {
+    text-decoration: underline;
+}
+
+.full-schedule {
+    border-right: 1px solid black;
+}
+
+.my-schedule {
+    border-left: 1px solid black;
+}

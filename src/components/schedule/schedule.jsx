@@ -2,6 +2,7 @@ import React from "react";
 import Axios from "axios";
 
 import Event from "./event";
+import Filterer from "./filterer";
 
 import "./schedule.css";
 
@@ -16,7 +17,19 @@ class Schedule extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {};
+        this.state = {
+            keyword: "",
+            tags: {
+                lightningChallenge: true,
+                talk: true,
+                logistics: true,
+                workshop: true,
+                judging: true,
+                food: true,
+                meetup: true
+            },
+            visibleEvents: []
+        };
         
         // Gets the event data from the server
         Axios.get("https://hackthenorth.com/fe-schedule.json")
@@ -53,7 +66,7 @@ class Schedule extends React.Component {
         let scheduleTimes = [];
 
         this.earliestTime.setMinutes(0, 0, 0);
-        this.latestTime = new Date(this.latestTime + 1000 * 60 * 60);
+        this.latestTime = new Date(this.latestTime.getTime() + 1000 * 60 * 60);
         this.latestTime.setMinutes(0, 0, 0);
 
         let n = Math.ceil((this.latestTime - this.earliestTime) / (1000 * 60 * 60));
@@ -63,7 +76,7 @@ class Schedule extends React.Component {
 
         for (let i = 0; i < n; i++) {
             let t = new Date(this.earliestTime.getTime() + i * 60 * 60 * 1000);
-            
+
             // If the start of a new day
             if (t.getHours() == 0) {
                 scheduleTimes.push(
@@ -93,41 +106,108 @@ class Schedule extends React.Component {
         )
     }
 
-    initSchedule(data) {
+    initEvents(data) {
         this.earliestTime = new Date(8640000000000000);
         this.latestTime = new Date(-8640000000000000);
 
-        this.scheduleData = [];
+        this.events = [];
         for (let i = 0; i < data.length; ++i) {
-            this.scheduleData.push({
-                id: data[i].id,
-                title: data[i].title,
-                description: data[i].description,
-                startTime: new Date(data[i].start_time),
-                endTime: new Date(data[i].end_time),
-                location: data[i].location,
-                tags: data[i].tags
-            });
+            this.events.push(new Event(data[i]));
 
             // Adjusts earliest time if necessary
-            if (this.scheduleData[i].startTime < this.earliestTime) {
-                this.earliestTime = this.scheduleData[i].startTime;
+            if (this.events[i].startTime < this.earliestTime) {
+                this.earliestTime = this.events[i].startTime;
             }
 
             // Adjusts the latest time if necessary
-            if (this.scheduleData[i].endTime > this.latestTime) {
-                this.latestTime =this.scheduleData[i].endTime;
+            if (this.events[i].endTime > this.latestTime) {
+                this.latestTime =this.events[i].endTime;
             }
         }
 
         this.initTimes();
     }
 
+    onFilterKeywordChange(e) {
+        this.setState({
+            
+        })
+    }
+
+    /**
+     * Handles when one of the tag filters is changed
+     * @param { Event } e 
+     */
+    onFilterTagChange(e) {
+        this.setState({
+
+        })
+    }
+
+    /**
+     * 
+     * @param { Event[] } visible 
+     * @returns { number[] }
+     */
+    orderTimes(visible) {
+        let order = [];
+
+        for (let i = 0; i < visible.length; ++i) {
+            order.push(visible[i].startTime.getTime(), visible[i].endTime.getTime());
+        }
+
+        order.sort();
+
+        return order;
+    }
+
+    updateEvents() {
+        this.state.visibleEvents = [];
+        
+        for (let i = 0; i < this.events.length; ++i) {
+            if (this.events[i].passesFilters(this.state.keyword, this.state.tags)) {
+                visibleEvents.push(events[i]);
+            }
+        }
+
+        // Orders all important times of the visible events
+        let orderedTimes = this.orderTimes(this.state.visibleEvents);
+
+        // The counter to detect when events overlap
+        let overlapCounter = [];
+
+        // Initializes all values to 0
+        for (let i = 0; i < orderedTimes.length; ++i) {
+            overlapCounter.push(0);
+        }
+
+        let maxOverlap = -1;
+
+        for (let i = 0; i < this.state.visibleEvents; ++i) {
+            let j = 0;
+
+            while (orderedTimes[j] < this.state.visibleEvents[i].startTime.getDate() && j < orderedTimes.length) {
+                ++j;
+            }
+
+            while (orderedTimes[j] < this.state.visibleEvents[i].endTime.getDate() && j < orderedTimes.length) {
+                
+                overlapCounter[j]++;
+            }
+        }
+    }
+
     render() {
 
         return (
             <div className="schedule-container">
+                <h1>Schedule</h1>
+                <hr/>
+                <Filterer onKeywordChange={ this.onFilterKeywordChange } onTagChange={ this.onFilterTagChange }/>
                 { this.timeColumn }
+                <div className="pure-menu pure-menu-horizontal pure-menu-scrollable">
+                    { this.visibleEvents }
+                </div>
             </div>
         );
     }

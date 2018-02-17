@@ -26,13 +26,13 @@ class Event extends React.Component {
          * The start time of the event
          * @type { Date }
          */
-        this.startTime = this.props.data.start_time;
+        this.startTime = new Date(this.props.data.start_time);
 
         /**
          * The end time of the event
          * @type { Date }
          */
-        this.endTime = this.props.data.end_time;
+        this.endTime = new Date(this.props.data.end_time);
 
         /**
          * The description of the event
@@ -75,7 +75,23 @@ class Event extends React.Component {
         })
     }
 
+    /**
+     * Returns true if the event meets the search criteria
+     * @param { string } keyword 
+     * @param {*} tags
+     */
+    passesFilters(keyword, tags) {
+        let hasCommonTag = false;
+        for (let i = 0; i < tags.length; i++) {
+            if (this.tags.includes(tags[i])) {
+                hasCommonTag = true;
+                break;
+            }
+        }
 
+        return hasCommonTag && (this.id.contains(keyword) || this.title.contains(keyword) || this.description.contains(keyword) ||
+            this.location.contains(keyword));
+    }
 
     render() {
         let popup;
