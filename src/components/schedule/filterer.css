@@ -31,3 +31,100 @@
 .my-schedule {
     border-left: 1px solid black;
 }
+
+.filter-label {
+    text-align: right;
+    box-sizing: border-box;
+    padding-right: 10px;
+}
+
+.checkbox-container {
+    display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+  }
+  
+  /* On mouse-over, add a grey background color */
+  .checkbox-container:hover input ~ .checkbox {
+    background-color: #ccc;
+  }
+  
+  /* When the checkbox is checked, add a blue background */
+  .checkbox-container input:checked ~ .checkbox {
+    background-color: #2196F3;
+  }
+
+.checkbox-container.checkbox-lightning_challenge input:checked ~ .checkbox {
+    background-color: rgba(41, 128, 217, 1);
+}
+
+.checkbox-container.checkbox-talk input:checked ~ .checkbox {
+    background-color: rgba(241, 196, 15, 1);
+}
+
+.checkbox-container.checkbox-logistics input:checked ~ .checkbox {
+    background-color: rgba(52, 73, 94, 1);
+}
+
+.checkbox-container.checkbox-workshop input:checked ~ .checkbox {
+    background-color: rgba(26, 188, 156, 1);
+}
+
+.checkbox-container.checkbox-judging input:checked ~ .checkbox {
+    background-color: rgba(142, 68, 173, 1);
+}
+
+.checkbox-container.checkbox-food input:checked ~ .checkbox {
+    background-color: rgba(210, 82, 127, 1);
+}
+
+.checkbox-container.checkbox-meetup input:checked ~ .checkbox {
+    background-color: rgba(192, 57, 45, 1);
+}
+  
+  /* Create the checkbox/indicator (hidden when not checked) */
+  .checkbox:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  /* Show the checkbox when checked */
+  .checkbox-container input:checked ~ .checkbox:after {
+    display: block;
+  }
+  
+  /* Style the checkbox/indicator */
+  .checkbox-container .checkbox:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
