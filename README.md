@@ -2,6 +2,12 @@
 
 ### Michal Jez
 
+## Usage
+
+1. Clone the repo
+2. Type `npm install` into a terminal
+3. Type `npm start` into a terminal
+
 ## Countdown Clock
 
 Well the countdown clock does what it needs to do... it successfully counts down from 2:00:00 every time the page is refreshed
