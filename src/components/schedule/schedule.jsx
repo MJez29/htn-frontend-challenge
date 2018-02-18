@@ -258,8 +258,8 @@ class Schedule extends React.Component {
 
         return (
             <div className="schedule-container">
-                <h1>Schedule</h1>
-                <hr/>
+                <h1 className="schedule-title">Schedule</h1>
+                <hr className="schedule-title-line"/>
                 <Filterer onKeywordChange={ this.onFilterKeywordChange } onTagChange={ this.onFilterTagChange }/>
                 <div className="schedule-content-container" style={ {
                 } }>

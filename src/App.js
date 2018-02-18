@@ -14,9 +14,11 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <div className="countdown">
-        	<Countdown/>
-        </div>
+	  	<div className="jumbo">
+			<div className="countdown">
+				<Countdown/>
+			</div>
+		</div>
 		<div>
 			<Schedule />
 		</div>

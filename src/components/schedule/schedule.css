@@ -1,3 +1,16 @@
+.schedule-title {
+    font-size: 2em;
+    text-align: center;
+}
+
+.schedule-title-line {
+    width: 5vw;
+    margin: 0 auto 10px;;
+    height: 2px;
+    border: none;
+    background-color: rgba(0, 0, 0, 1);
+}
+
 .schedule-times {
     width: 8ch;
     text-align: right;
