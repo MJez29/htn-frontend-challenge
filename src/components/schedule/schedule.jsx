@@ -2,6 +2,7 @@ import React from "react";
 import Axios from "axios";
 
 import Event from "./event";
+import RenderableEvent from "./renderable-event";
 import Filterer from "./filterer";
 
 import "./schedule.css";
@@ -38,7 +39,6 @@ class Schedule extends React.Component {
             .then((res) => {
                 this.initEvents(res.data);
                 this.initTimes();
-                this.updateEvents();
                 this.forceUpdate();
             })
             .catch((err) => {
@@ -118,16 +118,14 @@ class Schedule extends React.Component {
 
         this.earliestTime = new Date(this.earliestTime.getTime() - 2 * 60 * 60 * 1000);
         this.latestTime = new Date(this.latestTime.getTime() + 2 * 60 * 60 * 1000);
+
+        this.length = (this.latestTime.getTime() - this.earliestTime.getTime()) / 60000;
     }
 
     onFilterKeywordChange(e) {
 
         this.setState({
             keyword: e.target.value.toLowerCase()
-        }, () => {
-            this.updateEvents(() => {
-                this.forceUpdate();
-            });
         });
     }
 
@@ -140,10 +138,6 @@ class Schedule extends React.Component {
         tags[e.target.name] = e.target.checked;
         this.setState({
             tags: tags
-        }, () => {
-            this.updateEvents(() => {
-                this.forceUpdate();
-            });
         });
     }
 
@@ -174,9 +168,10 @@ class Schedule extends React.Component {
 
     updateEvents(callback) {
         let visibleEvents = [];
-        
+        console.log("---");
         for (let i = 0; i < this.events.length; ++i) {
             if (this.events[i].passesFilters(this.state.keyword, this.state.tags)) {
+                console.log(this.events[i].title);
                 visibleEvents.push(this.events[i]);
             }
         }
@@ -252,27 +247,28 @@ class Schedule extends React.Component {
             }
         }
 
-        this.setState({
-            visibleEventComponents: visibleEvents.map((e) => {
-                return <Event data={ e } />;
-            })
-        }, callback);
+        return visibleEvents.map((e) => {
+            return <RenderableEvent data={ e } />;
+        })
     }
 
     render() {
+
+        let vc = this.updateEvents();
 
         return (
             <div className="schedule-container">
                 <h1>Schedule</h1>
                 <hr/>
                 <Filterer onKeywordChange={ this.onFilterKeywordChange } onTagChange={ this.onFilterTagChange }/>
-                <div className="schedule-content-container">
+                <div className="schedule-content-container" style={ {
+                } }>
                     { this.timeColumn }
                     <div className="pure-menu pure-menu-horizontal pure-menu-scrollable event-container" style={ {
-                        width: "calc(100% - 8ch)",
-                        height: "5000px"
+                        height: "100%",
+                        width: "calc(100% - 8ch)"
                     } }>
-                        { this.state.visibleEventComponents }
+                        { vc }
                     </div>
                 </div>
             </div>

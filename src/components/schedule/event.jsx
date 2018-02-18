@@ -1,9 +1,7 @@
-import React from "react";
-
 import "./event.css";
 import Helper from "../../helper";
 
-class Event extends React.Component {
+class Event {
 
     /**
      * The height in px that a 1 minute long event would have
@@ -33,11 +31,8 @@ class Event extends React.Component {
     }
 
     constructor(props) {
-        super(props);
 
-        this.state = {};
-
-        let p = this.props.data || this.props;
+        let p = props.data || props;
 
         /**
          * The ID of the event
@@ -98,37 +93,6 @@ class Event extends React.Component {
          * @type { number }
          */
         this.length = p.length || 0;
-
-        this.displayInfo = this.displayInfo.bind(this);
-        this.hideInfo = this.hideInfo.bind(this);
-        this.toggleInfo = this.toggleInfo.bind(this);
-    }
-
-    /**
-     * Enables the additional info popup
-     */
-    displayInfo() {
-        this.setState({
-            popup: true
-        })
-    }
-
-    /**
-     * Toggles the additional info popup
-     */
-    toggleInfo() {
-        this.setState({
-            popup: !this.state.popup
-        })
-    }
-
-    /**
-     * Disables the additional info popup
-     */
-    hideInfo() {
-        this.setState({
-            popup: false
-        })
     }
 
     /**
@@ -163,72 +127,34 @@ class Event extends React.Component {
         for (let i = 0; i < this.tags.length; i++) {
             if (tags[this.tags[i]]) {
                 hasCommonTag = true;
-                console.log(this.tags[i]);
                 break;
             }
         }
 
+        // console.log("---");
+        // console.log("Keyword: " + keyword);
+        // console.log("Tags: ");
+        // console.log(tags);
+        // console.log("Title: " + this.title);
+        // console.log("id: " + this.id);
+        // console.log("description: " + this.description);
+        // console.log("location: " + this.location);
+        // console.log("Has common tag: " + hasCommonTag);
+        // console.log("Match with id: " + this.id.toString().toLowerCase().includes(keyword));
+        // console.log("Match with title: " + this.title.toLowerCase().includes(keyword));
+        // console.log("Match with description: " + this.description.toLowerCase().includes(keyword));
+        // console.log("Match with location: " + this.location.toLowerCase().includes(keyword));
+        // console.log("Should render: " + (hasCommonTag && (this.id.toString().toLowerCase().includes(keyword) || 
+        //     this.title.toLowerCase().includes(keyword) || 
+        //     this.description.toLowerCase().includes(keyword) || 
+        //     this.location.toLowerCase().includes(keyword))));
+
         // Check to see if the keyword is found in any of the data about the event
-        return hasCommonTag && (this.id.toString().toLowerCase().includes(keyword) || 
+        return (hasCommonTag && (this.id.toString().toLowerCase().includes(keyword) || 
             this.title.toLowerCase().includes(keyword) || 
             this.description.toLowerCase().includes(keyword) || 
-            this.location.toLowerCase().includes(keyword));
+            this.location.toLowerCase().includes(keyword)));
     }
-
-    render() {
-        let popup;
-
-        if (this.state.popup) {
-            popup = (
-                <div className={ `event-popup ${this.tags[0]}` }>
-                    <button className="event-popup-bookmark" onClick={ this.bookmark }>
-                        <i className="fa fa-bookmark"></i>
-                    </button>
-                    <button className="event-popup-close" onClick={ this.hideInfo }>
-                        <i className="fa fa-times"></i>
-                    </button>
-
-                    <h1 className="event-popup-title">
-                        { this.title }
-                    </h1>
-
-                    <p className="event-popup-location event-popup-p">
-                        { this.location }
-                    </p>
-
-                    <p className="event-popup-time event-popup-p">
-                        { `${this.startTime.getHours()}:${ Helper.padTime(this.startTime.getMinutes())}` }
-                        -
-                        { `${this.endTime.getHours()}:${ Helper.padTime(this.endTime.getMinutes())}` }
-                    </p>
-                    
-                    <br />
-
-                    <p className="event-popup-description event-popup-p">
-                        { this.description }
-                    </p>
-                </div>
-            );
-        }
-        
-        return (
-            <div className="event-container" style={ {
-                top: `${ this.minuteOffset * Event.UNIT_HEIGHT }px`,
-                left: `${ this.eventOffset * Event.WIDTH + Event.SPACING * (this.eventOffset + 1) }px`,
-            } }>
-                <div className={ `event ${this.tags[0]}` } onClick={ this.toggleInfo } style={ {
-                    height: `${ this.length * Event.UNIT_HEIGHT }px`,
-                    width: Event.WIDTH
-                } }>
-                    <p className="event-title">
-                        { this.title }
-                    </p>
-                </div>
-                { popup }
-            </div>
-        )
-    }
-
 }
 
 export default Event;
